@@ -1,8 +1,12 @@
+import logging
+
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model, authenticate, login
 from rest_framework import serializers
 
 from .models import CustomUser, ProfileUser
+
+logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
@@ -13,9 +17,9 @@ class RegisterUserSerializer(serializers.ModelSerializer):
     """
 
     password_1 = serializers.CharField(max_length=128, label='Введите пароль', write_only=True,
-                                       validators=[validate_password])
+                                       validators=[validate_password], style={'input_type': 'password'})
     password_2 = serializers.CharField(max_length=128, label='Повторите пароль', write_only=True,
-                                       validators=[validate_password])
+                                       validators=[validate_password], style={'input_type': 'password'})
 
     class Meta:
         model = User
@@ -46,15 +50,18 @@ class LoginUserSerializer(serializers.Serializer):
     """
 
     email = serializers.EmailField(label='Email')
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField(write_only=True, style={'input_type': 'password'})
 
     def create(self, attrs):
 
         user = authenticate(email=attrs['email'], password=attrs['password'])
-
         if user is None:
             raise serializers.ValidationError({'message': 'Неверные учетные данные.'})
+
         login(self.context['request'], user)
+
+        logger.info(f'Пользователь {user} успешно авторизовался.')
+
         return user
 
 
@@ -65,7 +72,7 @@ class ProfileUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ProfileUser
-        fields = ('user', 'bio', 'avatar', 'is_analyst', 'created_at')
+        fields = ('user', 'avatar', 'role', 'last_login', 'created_at')
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
