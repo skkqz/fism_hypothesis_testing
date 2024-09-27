@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model, logout
 
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import CreateAPIView, ListAPIView, DestroyAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.views import status
@@ -50,6 +50,15 @@ class ProfileUserView(ListAPIView):
     Представление для отображения профилей пользователей.
     """
 
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class ProfileDetailUserView(RetrieveAPIView):
+    """
+    Представление для отображения профилей пользователей.
+    """
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [IsAuthenticated]
