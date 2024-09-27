@@ -35,12 +35,16 @@ class ProfileUser(models.Model):
     Модель профиля пользователя.
     """
 
+    choice_analysts = (
+        ('ANALYST', 'Аналитик'),
+        ('SUPER_ANALYST', 'Админ аналитик'),
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile', verbose_name='Профиль')
     avatar = models.ImageField(upload_to='avatars/', blank=True, verbose_name='Аватар')
-    bio = models.TextField(max_length=500, blank=True, verbose_name='О себе')
-    is_analyst = models.BooleanField(default=False, verbose_name='Аналитик')
-    is_super_analyst = models.BooleanField(default=False, verbose_name='Супер Аналитик')
+    role = models.CharField(max_length=50, default='ANALYST', choices=choice_analysts)
+    last_login = models.DateTimeField(auto_now_add=True, blank=True, null=True, verbose_name='Дата и время последнего входа')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -13,4 +13,4 @@ class CustomUserAdmin(ModelAdmin):
 @admin.register(ProfileUser)
 class ProfileUserAdmin(ModelAdmin):
 
-    list_display = ['user', 'is_analyst']
+    list_display = ['user', 'role']
