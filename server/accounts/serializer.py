@@ -1,10 +1,13 @@
 import logging
+from calendar import month
+from idlelib.runscript import indent_message
 
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model, authenticate, login
 from rest_framework import serializers
 
 from .models import CustomUser, ProfileUser
+from .utils import update_profile_avatar
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +62,6 @@ class LoginUserSerializer(serializers.Serializer):
             raise serializers.ValidationError({'message': 'Неверные учетные данные.'})
 
         login(self.context['request'], user)
-
         logger.info(f'Пользователь {user} успешно авторизовался.')
 
         return user
@@ -70,9 +72,12 @@ class ProfileUserSerializer(serializers.ModelSerializer):
     Сериалайзер для профиля пользователя.
     """
 
+    avatar = serializers.ImageField(use_url=False)
+
     class Meta:
         model = ProfileUser
-        fields = ('user', 'avatar', 'role', 'last_login', 'created_at')
+        fields = ('avatar', 'role', 'last_login', 'created_at')
+        read_only_fields  = ('role', 'last_login', 'crate_at', )
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -85,3 +90,28 @@ class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'email', 'first_name', 'last_name', 'profile')
+
+
+class MeUserProfileSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер для детального отображения профиля и его изменений.
+    """
+
+    profile = ProfileUserSerializer()
+
+    class Meta:
+        model = User
+        fields = ('id', 'email', 'first_name', 'last_name', 'profile')
+
+
+    def create(self, validated_data):
+        raise NotImplemented('Данный метод не разрешен.')
+
+
+    def update(self, instance, validated_data):
+
+        profile_avatar = validated_data.pop('profile')
+        if profile_avatar:
+            update_profile_avatar(instance_profile=instance.profile, profile_avatar=profile_avatar)
+
+        return super().update(instance, validated_data)
