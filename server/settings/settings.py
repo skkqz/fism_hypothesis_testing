@@ -151,8 +151,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -189,11 +189,11 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {name} {message}',
+            'format': '[{asctime}] {levelname} {name} "{message}"',
             'style': '{',
         },
         'simple': {
-            'format': '{levelname} {message}',
+            'format': '[{asctime}] {levelname} {name} "{message}"',
             'style': '{',
         },
     },
@@ -203,8 +203,10 @@ LOGGING = {
             'formatter': 'simple',
         },
         'accounts_file': {
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'accounts.log'),  # Файл для логов конкретного приложения
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'accounts.log'),
+            'when': 'midnight',  # Новые файлы каждый день в полночь
+            'backupCount': 7,  # Хранить логи за последние 7 дней (по желанию)
             'formatter': 'verbose',
             'encoding': 'utf-8',
         },
