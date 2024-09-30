@@ -1,6 +1,4 @@
 import logging
-from calendar import month
-from idlelib.runscript import indent_message
 
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model, authenticate, login

@@ -50,7 +50,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_rest_passwordreset',
 
-    'accounts',
+    'modules.accounts',
+    'modules.products',
+    'modules.agents',
 ]
 
 MIDDLEWARE = [
@@ -87,30 +89,30 @@ WSGI_APPLICATION = 'settings.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django_db',
-        'USER': 'user',
-        'PASSWORD': '100',
-        'HOST': 'db',
-        'PORT':  '5432',
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'fism',
-#         'USER': 'postgres',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#         'OPTIONS': {
-#             'client_encoding': 'UTF8',
-#         },
+#         'NAME': 'django_db',
+#         'USER': 'user',
+#         'PASSWORD': '100',
+#         'HOST': 'db',
+#         'PORT':  '5432',
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fism',
+        'USER': 'postgres',
+        'PASSWORD': '361221',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'OPTIONS': {
+            'client_encoding': 'UTF8',
+        },
+    }
+}
 
 
 # Password validation
@@ -170,13 +172,12 @@ REST_FRAMEWORK = {
     ]
 }
 
-# iltvqlgrkbizwtea
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 EMAIL_HOST_USER = "skkqw@yandex.ru"
-EMAIL_HOST_PASSWORD = "iltvqlgrkbizwtea"
+EMAIL_HOST_PASSWORD = ""
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
@@ -212,7 +213,7 @@ LOGGING = {
         },
     },
     'loggers': {
-        'accounts': {  # Замените 'myapp' на имя вашего приложения
+        'accounts': {
             'handlers': ['console', 'accounts_file'],
             'level': 'DEBUG',
             'propagate': False,
