@@ -1,5 +1,6 @@
 from django.contrib import admin
 from unfold.admin import ModelAdmin
+from django_rest_passwordreset.models import ResetPasswordToken
 
 from .models import CustomUser, ProfileUser
 
@@ -14,3 +15,6 @@ class CustomUserAdmin(ModelAdmin):
 class ProfileUserAdmin(ModelAdmin):
 
     list_display = ['user', 'role']
+
+
+admin.site.unregister(ResetPasswordToken)

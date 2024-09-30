@@ -40,7 +40,6 @@ def resize_image(image):
     img.thumbnail((200, 200))
     new_name = rename_image(image.name)
     path_image = f'{settings.MEDIA_ROOT}/{new_name}'
-    print(path_image)
     img.save(path_image)
 
     return new_name
@@ -56,6 +55,3 @@ def update_profile_avatar(instance_profile, profile_avatar: Dict[str, InMemoryUp
 
     image = resize_image(profile_avatar['avatar'])
     instance_profile.avatar.save(image, ContentFile(profile_avatar['avatar'].read()), save=True)
-    # instance_profile.avatar = image
-    # instance_profile.save()
-
