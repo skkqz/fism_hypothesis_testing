@@ -192,38 +192,38 @@ SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '[{asctime}] {levelname} {name} "{message}"',
-            'style': '{',
-        },
-        'simple': {
-            'format': '[{asctime}] {levelname} {name} "{message}"',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
-        },
-        'accounts_file': {
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'accounts.log'),
-            'when': 'midnight',  # Новые файлы каждый день в полночь
-            'backupCount': 7,  # Хранить логи за последние 7 дней (по желанию)
-            'formatter': 'verbose',
-            'encoding': 'utf-8',
-        },
-    },
-    'loggers': {
-        'accounts': {
-            'handlers': ['console', 'accounts_file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'verbose': {
+#             'format': '[{asctime}] {levelname} {name} "{message}"',
+#             'style': '{',
+#         },
+#         'simple': {
+#             'format': '[{asctime}] {levelname} {name} "{message}"',
+#             'style': '{',
+#         },
+#     },
+#     'handlers': {
+#         'console': {
+#             'class': 'logging.StreamHandler',
+#             'formatter': 'simple',
+#         },
+#         'accounts_file': {
+#             'class': 'logging.handlers.TimedRotatingFileHandler',
+#             'filename': os.path.join(BASE_DIR, 'logs', 'accounts.log'),
+#             'when': 'midnight',  # Новые файлы каждый день в полночь
+#             'backupCount': 7,  # Хранить логи за последние 7 дней (по желанию)
+#             'formatter': 'verbose',
+#             'encoding': 'utf-8',
+#         },
+#     },
+#     'loggers': {
+#         'accounts': {
+#             'handlers': ['console', 'accounts_file'],
+#             'level': 'DEBUG',
+#             'propagate': False,
+#         },
+#     },
+# }
