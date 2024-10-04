@@ -36,8 +36,8 @@ class ProfileUser(models.Model):
     """
 
     choice_analysts = (
-        ('ANALYST', 'Аналитик'),
-        ('SUPER_ANALYST', 'Админ аналитик'),
+        ('agent', 'Агент'),
+        ('underwriter', 'Андеррайтер'),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

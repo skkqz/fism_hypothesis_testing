@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from .models import Agent, Face, Division
+from .models import Agent, Face, Division, AgentAgreements
+from ..products.serializer import LOBSerializer
 
 
 class DivisionSerialize(serializers.ModelSerializer):
@@ -66,4 +67,21 @@ class AgentSerializer(serializers.ModelSerializer):
         response['face'] = FaceSerializer(instance.face).data
         response['division'] = DivisionSerialize(instance.division).data
 
+        return response
+
+
+class AgentAgreementsSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер для хранения условий агентских договоров.
+    """
+
+    class Meta:
+        model = AgentAgreements
+        fields = ('id', 'agent', 'lob', 'rate')
+
+    def to_representation(self, instance):
+
+        response = super().to_representation(instance)
+        response['agent'] = AgentSerializer(instance.agent).data
+        response['lob'] = LOBSerializer(instance.lob).data
         return response

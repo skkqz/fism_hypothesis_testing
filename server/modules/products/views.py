@@ -2,11 +2,13 @@ from rest_framework.generics import ListAPIView, UpdateAPIView, RetrieveAPIView,
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Product, Risk, ProductMetaField
-from . serializer import ProductSerializer, ProductMetaFieldSerializer, RiskSerializer, CopyProductSerializer
+from .mixins import AtomicMixin
+from .models import Product, Risk, ProductMetaField, LOB
+from . serializer import (ProductSerializer, ProductMetaFieldSerializer, RiskSerializer, CopyProductSerializer,
+                          LOBSerializer)
 
 
-class ProductView(ModelViewSet):
+class ProductView(AtomicMixin, ModelViewSet):
     """
     Представление для продукта.
     """
@@ -16,7 +18,7 @@ class ProductView(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
-class RiskView(ModelViewSet):
+class RiskView(AtomicMixin, ModelViewSet):
     """
     Представление для рисков продукта.
     """
@@ -26,7 +28,7 @@ class RiskView(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
-class ProductMetaFieldView(ModelViewSet):
+class ProductMetaFieldView(AtomicMixin, ModelViewSet):
     """
     Представление для мета данных продукта.
     """
@@ -36,7 +38,17 @@ class ProductMetaFieldView(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
-class CopyProductView(CreateAPIView):
+class LOBView(AtomicMixin, ModelViewSet):
+    """
+    Представление для линии бизнеса.
+    """
+
+    queryset = LOB.objects.all()
+    serializer_class = LOBSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class CopyProductView(AtomicMixin ,CreateAPIView):
     """
     Представление для копирования продукта.
     """

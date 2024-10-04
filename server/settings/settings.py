@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'modules.accounts',
     'modules.products',
     'modules.agents',
+    'modules.contracts',
 ]
 
 MIDDLEWARE = [
@@ -89,13 +90,6 @@ WSGI_APPLICATION = 'settings.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',  # Файл базы данных будет храниться в корневом каталоге проекта
-    }
-}
-
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -107,19 +101,19 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'fism',
-#         'USER': 'postgres',
-#         'PASSWORD': '361221',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#         'OPTIONS': {
-#             'client_encoding': 'UTF8',
-#         },
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fism',
+        'USER': 'postgres',
+        'PASSWORD': '361221',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'OPTIONS': {
+            'client_encoding': 'UTF8',
+        },
+    }
+}
 
 
 # Password validation
@@ -174,7 +168,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
-    'DEFAULT_AUTHENTICATION_CLASSE': [
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication'
     ]
 }
@@ -192,38 +186,38 @@ SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'verbose': {
-#             'format': '[{asctime}] {levelname} {name} "{message}"',
-#             'style': '{',
-#         },
-#         'simple': {
-#             'format': '[{asctime}] {levelname} {name} "{message}"',
-#             'style': '{',
-#         },
-#     },
-#     'handlers': {
-#         'console': {
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'simple',
-#         },
-#         'accounts_file': {
-#             'class': 'logging.handlers.TimedRotatingFileHandler',
-#             'filename': os.path.join(BASE_DIR, 'logs', 'accounts.log'),
-#             'when': 'midnight',  # Новые файлы каждый день в полночь
-#             'backupCount': 7,  # Хранить логи за последние 7 дней (по желанию)
-#             'formatter': 'verbose',
-#             'encoding': 'utf-8',
-#         },
-#     },
-#     'loggers': {
-#         'accounts': {
-#             'handlers': ['console', 'accounts_file'],
-#             'level': 'DEBUG',
-#             'propagate': False,
-#         },
-#     },
-# }
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name} "{message}"',
+            'style': '{',
+        },
+        'simple': {
+            'format': '[{asctime}] {levelname} {name} "{message}"',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'accounts_file': {
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'accounts.log'),
+            'when': 'midnight',  # Новые файлы каждый день в полночь
+            'backupCount': 7,  # Хранить логи за последние 7 дней (по желанию)
+            'formatter': 'verbose',
+            'encoding': 'utf-8',
+        },
+    },
+    'loggers': {
+        'accounts': {
+            'handlers': ['console', 'accounts_file'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+    },
+}

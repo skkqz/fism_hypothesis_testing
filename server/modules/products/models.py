@@ -3,23 +3,32 @@ import uuid
 from django.db import models
 
 
+class LOB(models.Model):
+    """
+    Модель для хранения информации о линии бизнеса.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=500, verbose_name='Наименование линии бизнеса')
+    risks = models.ManyToManyField('Risk', related_name='lobs', verbose_name='Риски метаполя')
+
+
+    class Meta:
+        verbose_name = 'Линия бизнеса'
+        verbose_name_plural = 'Линии бизнеса'
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     """
     Модель страхового продукта.
     """
 
-    CHOICE_LOB = (
-        ('CASCO', 'КАСКО'),
-        ('OSAGO', 'ОСАГО'),
-        ('THI', 'Страхование путешественников'),
-        ('ACCIDENT', 'Страхование от несчастных случаев'),
-    )
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    risk = models.ManyToManyField('Risk', through='ProductRisk', related_name='products',
-                                  verbose_name='Риски продукта')
     name = models.CharField(max_length=500, verbose_name='Наименование продукта')
-    lob = models.CharField(max_length=500, choices=CHOICE_LOB, default='CASCO', blank=False, null=True, verbose_name='Линия бизнеса')
+    lob = models.ForeignKey(LOB, on_delete=models.CASCADE, blank=False, null=True, verbose_name='Линия бизнеса')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -38,6 +47,7 @@ class Risk(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=500, blank=False, verbose_name='Наименование риска')
+    value = models.IntegerField(verbose_name='Сумма страхования по данному риску')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -55,9 +65,9 @@ class ProductMetaField(models.Model):
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='meta_fields', verbose_name='Продукт')
+    lob = models.ForeignKey(LOB, on_delete=models.CASCADE, blank=True, null=True, verbose_name='Линия бизнеса')
     name = models.CharField(max_length=500, verbose_name='Наименование')
-    value = models.CharField(max_length=500, verbose_name='Значения поля')
+    is_required = models.BooleanField(default=False, verbose_name='Обязательное/Не обязательно поле')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

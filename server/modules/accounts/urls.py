@@ -3,7 +3,7 @@ from .views import (UserRegistrationView, UserLoginView, UserLogoutView, Profile
                     MeProfileUserView)
 
 
-app_name = 'accounts'
+app_name = 'app_accounts'
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='register'),

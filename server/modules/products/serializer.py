@@ -1,9 +1,9 @@
-from tabnanny import check
+from itertools import product
 
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
-from .models import Product, Risk, ProductMetaField
+from .models import Product, Risk, ProductMetaField, LOB
 from .service import CopyProduct
 
 
@@ -11,32 +11,72 @@ copy_product = CopyProduct()
 COPY_PREFIX = '(КОПИЯ)'
 
 
+
+class LOBSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер для хранения информации о линии бизнеса.
+    """
+
+    class Meta:
+        model = LOB
+        fields = ('id', 'name')
+
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+
+        meta_fields = ProductMetaField.objects.filter(lob=instance)
+        response['meta_fields'] = ProductMetaFieldSerializer(meta_fields, many=True).data
+
+        return response
+
+class LOBForProductSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер для хранения информации о линии бизнеса.
+    """
+
+    class Meta:
+        model = LOB
+        fields = ('id', 'name')
+
+
+class ProductMetaFieldSerializer(serializers.ModelSerializer):
+    """
+    Сериалайзер для хранения дополнительных метаданных, связанных с конкретным страховым продуктом.
+    """
+
+    lob = serializers.PrimaryKeyRelatedField(queryset=LOB.objects.all(), label='Линия бизнеса')
+
+    class Meta:
+        model = ProductMetaField
+        fields = ('id', 'name', 'lob', 'risks', 'updated_at', 'created_at')
+        read_only_fields = ('created_at','updated_at',)
+
+
+    def to_representation(self, instance):
+
+        response = super().to_representation(instance)
+        response['risks'] = RiskSerializer(instance.risks.all(), many=True).data
+
+        return response
+
+
 class ProductSerializer(serializers.ModelSerializer):
     """
     Сериалайзер для страхового продукта.
     """
 
-    risk = serializers.PrimaryKeyRelatedField(queryset=Risk.objects.all(), many=True, label='Риски')
+    risks = serializers.PrimaryKeyRelatedField(queryset=Risk.objects.all(), many=True, required=True, label='Риски продукта')
 
     class Meta:
         model = Product
-        fields = ('id', 'name', 'lob', 'risk')
+        fields = ('id', 'name', 'lob', 'risks')
         read_only_fields = ('created_at','updated_at', )
-
-
-    def create(self, validated_data):
-
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-
-        return super().update(instance, validated_data)
 
     def to_representation(self, instance):
 
         response = super().to_representation(instance)
-        response['risk'] = RiskSerializer(instance.risk.all(), many=True).data
-        response['meta_fields'] = ProductMetaFieldSerializer(instance.meta_fields.all(), many=True).data
+        response['lob'] = LOBForProductSerializer(instance.lob).data
+        response['risks'] = RiskSerializer(instance.risks.all(), many=True).data
 
         return response
 
@@ -48,39 +88,8 @@ class RiskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Risk
-        fields = ('id', 'name', 'updated_at', 'created_at')
+        fields = ('id', 'name', 'rate', 'value', 'updated_at', 'created_at')
         read_only_fields = ('created_at','updated_at',)
-
-    def create(self, validated_data):
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
-
-    def to_representation(self, instance):
-        return super().to_representation(instance)
-
-
-class ProductMetaFieldSerializer(serializers.ModelSerializer):
-    """
-    Сериалайзер для хранения дополнительных метаданных, связанных с конкретным страховым продуктом.
-    """
-
-    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), label='Продукт')
-
-    class Meta:
-        model = ProductMetaField
-        fields = ('id', 'name', 'value', 'product', 'updated_at', 'created_at')
-        read_only_fields = ('created_at','updated_at',)
-
-    def create(self, validated_data):
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
-
-    def to_representation(self, instance):
-        return super().to_representation(instance)
 
 
 class CopyProductSerializer(serializers.Serializer):
@@ -106,9 +115,8 @@ class CopyProductSerializer(serializers.Serializer):
     def create(self, validated_data):
 
         pk = validated_data['copy_product_id']
-
-        product =get_object_or_404(Product, pk=pk)
-
+        product = get_object_or_404(Product, pk=pk)
+        
         copy_product.copy_all_product(product)
 
         return validated_data

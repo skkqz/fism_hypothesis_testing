@@ -1,10 +1,9 @@
-from django.shortcuts import render
-
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
-from .models import Face, Agent, Division
-from .serializer import FaceSerializer, AgentSerializer, DivisionSerialize
+from .models import Face, Agent, Division, AgentAgreements
+from .serializer import FaceSerializer, AgentSerializer, DivisionSerialize, AgentAgreementsSerializer
+from ..permissons import IsAgentOrAdminPermission
 
 
 class DivisionView(ModelViewSet):
@@ -35,3 +34,13 @@ class FaceView(ModelViewSet):
     queryset = Face.objects.all()
     serializer_class = FaceSerializer
     permission_classes = [IsAuthenticated]
+
+
+class AgentAgreementsView(ModelViewSet):
+    """
+    Представление для контрагента.
+    """
+
+    queryset = AgentAgreements.objects.all()
+    serializer_class = AgentAgreementsSerializer
+    permission_classes = [IsAuthenticated, IsAgentOrAdminPermission]

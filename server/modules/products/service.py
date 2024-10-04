@@ -1,6 +1,6 @@
 from typing import Dict
 
-from .models import Product, Risk, ProductMetaField
+from .models import Product, Risk, ProductMetaField, LOB
 
 
 class CopyProduct:
@@ -10,7 +10,7 @@ class CopyProduct:
 
     def __init__(self):
         self.copy_risks = CopyRisk()
-        self.copy_product_meta_field = CopyProductMetaField()
+        self.copy_product_meta_field = CopyLOB()
 
 
     def copy_all_product(self, product: Product) -> Product:
@@ -53,14 +53,14 @@ class CopyRisk:
     @staticmethod
     def copy_risk(old_product: Product, new_product: Product) -> Product:
 
-        risks = old_product.risk.all()
-        new_product.risk.set(risks)
+        risks = old_product.risks.all()
+        new_product.risks.set(risks)
         new_product.save()
 
         return new_product
 
 
-class CopyProductMetaField:
+class CopyLOB:
     """
     Копирования мета полей продукта.
     """
@@ -68,8 +68,7 @@ class CopyProductMetaField:
     @staticmethod
     def copy_meta_field(old_product: Product, new_product: Product) -> Product:
 
-        meta_fields = old_product.meta_fields.all()
-        new_product.meta_fields.set(meta_fields)
+        new_product.lob = old_product.lob
         new_product.save()
 
         return new_product

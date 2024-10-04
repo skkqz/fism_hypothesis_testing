@@ -1,6 +1,8 @@
 import uuid
 from django.db import models
 
+from modules.products.models import LOB
+
 
 class Division(models.Model):
     """
@@ -16,7 +18,7 @@ class Division(models.Model):
         verbose_name_plural = 'Подразделения'
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
 
 class Face(models.Model):
@@ -44,7 +46,7 @@ class Face(models.Model):
         verbose_name_plural = 'Контрагенты'
 
     def __str__(self):
-        return self.first_name
+        return f'{self.first_name}'
 
 
 
@@ -62,7 +64,7 @@ class Agent(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     face = models.ForeignKey(Face, on_delete=models.CASCADE, blank=False, verbose_name='Контрагент')
-    division = models.ForeignKey(Division, on_delete=models.CASCADE, blank=False, verbose_name='Подразделение') # OneToOne
+    division = models.ForeignKey(Division, on_delete=models.CASCADE, blank=False, verbose_name='Подразделение')
     status = models.CharField(max_length=255, choices=CHOICE_STATUS, blank=False, verbose_name='Статус агентского договора')
     created_at = models.DateField(auto_now_add=True, blank=False, verbose_name='Дата создания договора')
     date_begin = models.DateField(verbose_name='Дата начала действия')
@@ -73,4 +75,22 @@ class Agent(models.Model):
         verbose_name_plural = 'Агенты'
 
     def __str__(self):
-        return self.status
+        return f'{self.face}'
+
+
+class AgentAgreements(models.Model):
+    """
+    Модель хранения условий агентских договоров.
+    """
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE, verbose_name='Агент')
+    lob = models.ForeignKey(LOB, on_delete=models.CASCADE, blank=False, null=True, verbose_name='Линия бизнеса')
+    rate = models.IntegerField(blank=False, verbose_name='Ставка комиссии (проценты)')
+
+    class Meta:
+        verbose_name = 'Условия агента'
+        verbose_name_plural = 'Условия агентов'
+
+    def __str__(self):
+        return f'{self.agent} - {self.lob}'
